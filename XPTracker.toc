@@ -1,0 +1,10 @@
+## Interface: 50400
+## Title: XP Tracker
+## Notes: Affiche l'XP par heure et le temps jusqu'au prochain niveau
+## Author: @vlldnt
+## Version: 2.0
+## SavedVariables: XPTrackerSettings
+
+Locales.lua
+XPTracker.lua
+Config.lua
