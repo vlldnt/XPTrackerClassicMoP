@@ -11,6 +11,8 @@ This addon is available in multiple languages and automatically detects your gam
 🇬🇧 English | 🇫🇷 Français | 🇩🇪 Deutsch | 🇪🇸 Español | 🇮🇹 Italiano <br>
 🇵🇹 Português | 🇷🇺 Русский | 🇰🇷 한국어 | 🇨🇳 简体中文 | 🇹🇼 繁體中文
 
+**Supported Version:** World of Warcraft Classic - Mists of Pandaria (Version: 5.5.1)
+
 ---
 
 ## Settings Persistence
@@ -130,3 +132,4 @@ Or copy directly for all characters:
 
 **Author:** [@vlldnt](https://github.com/vlldnt)
 **Version:** 1.0
+**Interface Version:** Mists of Pandaria Classic - 5.5.1
