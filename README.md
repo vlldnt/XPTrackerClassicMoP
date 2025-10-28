@@ -1,10 +1,15 @@
-# XP Tracker
+# XP Tracker - Classic MoP
+
+## What this addon does
+
+**XP Tracker - Classic MoP** displays your current experience rate (XP per hour), estimated time to the next level, session duration, and other helpful stats directly on your screen. It provides pause/reset controls, a configuration panel with color and alignment options, and automatically saves settings between sessions. Works across multiple World of Warcraft versions.
 
 ## 🌍 Multilingual Support
 
 This addon is available in multiple languages and automatically detects your game client language!
 
-🇬🇧 English | 🇫🇷 Français | 🇩🇪 Deutsch | 🇪🇸 Español | 🇮🇹 Italiano | 🇵🇹 Português | 🇷🇺 Русский | 🇰🇷 한국어 | 🇨🇳 简体中文 | 🇹🇼 繁體中文
+🇬🇧 English | 🇫🇷 Français | 🇩🇪 Deutsch | 🇪🇸 Español | 🇮🇹 Italiano <br>
+🇵🇹 Português | 🇷🇺 Русский | 🇰🇷 한국어 | 🇨🇳 简体中文 | 🇹🇼 繁體中文
 
 ---
 
