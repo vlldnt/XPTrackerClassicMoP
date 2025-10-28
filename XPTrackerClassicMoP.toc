@@ -1,5 +1,5 @@
 ## Interface: 50400
-## Title: XP Tracker - Classic MoP
+## Title: XPTracker Classic MoP
 ## Notes: Affiche l'XP par heure et le temps jusqu'au prochain niveau
 ## Author: @vlldnt
 ## Version: 2.0
