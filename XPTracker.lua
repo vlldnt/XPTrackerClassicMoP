@@ -263,7 +263,7 @@ local function ApplyFont()
     -- Fixed font size at 16 for main text
     text:SetFont(fontPath, 16, flags or "OUTLINE")
     -- Smaller size (14) for percentage text with italic style
-    percentText:SetFont(fontPath, 14, "OUTLINE, MONOCHROME")
+    percentText:SetFont(fontPath, 12, flags or "OUTLINE")
     timeText:SetFont(fontPath, 16, flags or "OUTLINE")
     sessionTimeText:SetFont(fontPath, 16, flags or "OUTLINE")
 end
