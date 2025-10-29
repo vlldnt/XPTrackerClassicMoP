@@ -24,7 +24,6 @@ local fontNames = {
 local defaultSettings = {
     textAlign = "LEFT",  -- LEFT, CENTER, RIGHT
     scale = 1.0,         -- Interface scale (0.5 to 2.0)
-    fontSize = 14,       -- Font size for main text (10 to 24)
     bgOpacity = 0.4,     -- Background opacity (0 to 1)
     font = "FRIZQT",     -- Font choice
 }
@@ -251,15 +250,15 @@ local function ApplyScale()
     frame:SetScale(scale)
 end
 
--- Function to apply font size
-local function ApplyFontSize()
-    local size = XPTrackerSettings.fontSize or 14
+-- Function to apply font
+local function ApplyFont()
     local fontChoice = XPTrackerSettings.font or "FRIZQT"
     local fontPath = fontPaths[fontChoice] or fontPaths["FRIZQT"]
     local _, _, flags = text:GetFont()
-    text:SetFont(fontPath, size, flags or "OUTLINE")
-    timeText:SetFont(fontPath, size - 2, flags or "OUTLINE")
-    sessionTimeText:SetFont(fontPath, size - 2, flags or "OUTLINE")
+    -- Fixed font size at 18
+    text:SetFont(fontPath, 18, flags or "OUTLINE")
+    timeText:SetFont(fontPath, 18, flags or "OUTLINE")
+    sessionTimeText:SetFont(fontPath, 18, flags or "OUTLINE")
 end
 
 -- Function to apply background opacity
@@ -271,7 +270,7 @@ end
 -- Expose functions for config panel
 XPT.ApplyTextAlignment = ApplyTextAlignment
 XPT.ApplyScale = ApplyScale
-XPT.ApplyFontSize = ApplyFontSize
+XPT.ApplyFont = ApplyFont
 XPT.ApplyBackgroundOpacity = ApplyBackgroundOpacity
 
 -- Update display function
@@ -322,10 +321,18 @@ local function UpdateDisplay()
         xpPerHour = math.floor((sessionXP / elapsedTime) * 3600)
     end
 
-    -- Display XP/h with green color for value
+    -- Display XP/h with green color for value and percentage per hour
     local xpValue = xpPerHour > 0 and FormatNumber(xpPerHour) or L.calculating
     local xpFormatted = L.xpPerHour:gsub("%%s", "|cff00ff00%%s|r")
-    text:SetText(string.format(xpFormatted, xpValue))
+    
+    -- Add percentage per hour in smaller font
+    if xpPerHour > 0 and maxXP > 0 then
+        local percentRate = (xpPerHour / maxXP) * 100
+        local percentText = string.format(" |cffaaaaaa(|r|cff00ff00%.1f%%/h|r|cffaaaaaa)|r", percentRate)
+        text:SetText(string.format(xpFormatted, xpValue) .. percentText)
+    else
+        text:SetText(string.format(xpFormatted, xpValue))
+    end
 
     -- Display session time with yellow color for value
     local timeValue = FormatTime(math.floor(elapsedTime)) .. (isTracking and "" or " " .. L.paused)
@@ -444,9 +451,10 @@ frame:SetScript("OnEvent", function(self, event, ...)
 
         -- Ensure new settings exist
         XPTrackerSettings.scale = XPTrackerSettings.scale or 1.0
-        XPTrackerSettings.fontSize = XPTrackerSettings.fontSize or 14
         XPTrackerSettings.bgOpacity = XPTrackerSettings.bgOpacity or 0.4
         XPTrackerSettings.font = XPTrackerSettings.font or "FRIZQT"
+        -- Remove old fontSize setting if it exists
+        XPTrackerSettings.fontSize = nil
 
         startTime = time()
         startXP = UnitXP("player")
@@ -464,7 +472,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
         wasInInstance = inInstance
         ApplyTextAlignment()
         ApplyScale()
-        ApplyFontSize()
+        ApplyFont()
         ApplyBackgroundOpacity()
         UpdateDisplay()
     elseif event == "PLAYER_XP_UPDATE" then

@@ -134,31 +134,9 @@ local function InitializeConfig()
         if XPT.ApplyScale then XPT.ApplyScale() end
     end)
 
-    -- Font Size Slider
-    local fontLabel = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    fontLabel:SetPoint("TOPLEFT", scaleSlider, "BOTTOMLEFT", 0, -15)
-    fontLabel:SetText((L.fontSizeLabel or "Font Size") .. ": " .. (XPTrackerSettings.fontSize or 14))
-
-    local fontSlider = CreateFrame("Slider", "XPTConfigFontSlider", content, "OptionsSliderTemplate")
-    fontSlider:SetPoint("TOPLEFT", fontLabel, "BOTTOMLEFT", 0, -8)
-    fontSlider:SetMinMaxValues(10, 24)
-    fontSlider:SetValue(XPTrackerSettings.fontSize or 14)
-    fontSlider:SetValueStep(1)
-    fontSlider:SetObeyStepOnDrag(true)
-    fontSlider:SetWidth(200)
-    _G[fontSlider:GetName() .. 'Low']:SetText('10')
-    _G[fontSlider:GetName() .. 'High']:SetText('24')
-    _G[fontSlider:GetName() .. 'Text']:SetText('')
-    fontSlider:SetScript("OnValueChanged", function(self, value)
-        XPTrackerSettings.fontSize = value
-        fontLabel:SetText((L.fontSizeLabel or "Font Size") .. ": " .. value)
-        if XPT.ApplyFontSize then XPT.ApplyFontSize() end
-        if XPT.UpdateDisplay then XPT.UpdateDisplay() end
-    end)
-
     -- Background Opacity Slider
     local opacityLabel = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    opacityLabel:SetPoint("TOPLEFT", fontSlider, "BOTTOMLEFT", 0, -15)
+    opacityLabel:SetPoint("TOPLEFT", scaleSlider, "BOTTOMLEFT", 0, -15)
     opacityLabel:SetText((L.opacityLabel or "Background Opacity") .. ": " .. string.format("%.0f%%", (XPTrackerSettings.bgOpacity or 0.4) * 100))
 
     local opacitySlider = CreateFrame("Slider", "XPTConfigOpacitySlider", content, "OptionsSliderTemplate")
@@ -219,7 +197,7 @@ local function InitializeConfig()
 
         btn:SetScript("OnClick", function(self)
             XPTrackerSettings.font = self.value
-            if XPT.ApplyFontSize then XPT.ApplyFontSize() end
+            if XPT.ApplyFont then XPT.ApplyFont() end
             if XPT.UpdateDisplay then XPT.UpdateDisplay() end
             UpdateFontButtons()
         end)
@@ -261,7 +239,7 @@ local function InitializeConfig()
 
                 if XPT.ApplyTextAlignment then XPT.ApplyTextAlignment() end
                 if XPT.ApplyScale then XPT.ApplyScale() end
-                if XPT.ApplyFontSize then XPT.ApplyFontSize() end
+                if XPT.ApplyFont then XPT.ApplyFont() end
                 if XPT.ApplyBackgroundOpacity then XPT.ApplyBackgroundOpacity() end
                 if XPT.UpdateDisplay then XPT.UpdateDisplay() end
 
@@ -271,8 +249,6 @@ local function InitializeConfig()
                 -- Update sliders
                 scaleSlider:SetValue((XPTrackerSettings.scale or 1.0) * 100)
                 scaleLabel:SetText((L.scaleLabel or "Interface Scale") .. ": " .. string.format("%.0f%%", (XPTrackerSettings.scale or 1.0) * 100))
-                fontSlider:SetValue(XPTrackerSettings.fontSize or 14)
-                fontLabel:SetText((L.fontSizeLabel or "Font Size") .. ": " .. (XPTrackerSettings.fontSize or 14))
                 opacitySlider:SetValue((XPTrackerSettings.bgOpacity or 0.4) * 100)
                 opacityLabel:SetText((L.opacityLabel or "Background Opacity") .. ": " .. string.format("%.0f%%", (XPTrackerSettings.bgOpacity or 0.4) * 100))
 
