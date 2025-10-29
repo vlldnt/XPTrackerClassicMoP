@@ -194,7 +194,8 @@ local function InitializeConfig()
         {value = "FRIZQT", label = "Friz Quadrata", x = 0},
         {value = "ARIALN", label = "Arial Narrow", x = 110},
         {value = "SKURRI", label = "Skurri", x = 220},
-        {value = "MORPHEUS", label = "Morpheus", x = 55, y = -40}
+        {value = "MORPHEUS", label = "Morpheus", x = 55, y = -40},
+        {value = "PARIS2024", label = "Paris 2024", x = 165, y = -40}
     }
 
     local function UpdateFontButtons()

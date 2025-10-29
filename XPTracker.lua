@@ -7,7 +7,17 @@ local fontPaths = {
     FRIZQT = "Fonts\\FRIZQT__.TTF",
     ARIALN = "Fonts\\ARIALN.TTF",
     SKURRI = "Fonts\\SKURRI.TTF",
-    MORPHEUS = "Fonts\\MORPHEUS.TTF"
+    MORPHEUS = "Fonts\\MORPHEUS.TTF",
+    PARIS2024 = "Interface\\AddOns\\XPTrackerClassicMoP\\assets\\fonts\\Paris2024-Variable.ttf"
+}
+
+-- Font display names
+local fontNames = {
+    FRIZQT = "Friz Quadrata",
+    ARIALN = "Arial Narrow",
+    SKURRI = "Skurri",
+    MORPHEUS = "Morpheus",
+    PARIS2024 = "Paris 2024"
 }
 
 -- Default settings
@@ -25,10 +35,11 @@ XPTrackerSettings = XPTrackerSettings or CopyTable(defaultSettings)
 -- Expose default settings for config panel
 XPT.defaultSettings = defaultSettings
 XPT.fontPaths = fontPaths
+XPT.fontNames = fontNames
 
 -- Main frame
 local frame = CreateFrame("Frame", "XPTrackerFrame", UIParent)
-frame:SetSize(250, 80)
+frame:SetSize(180, 80)
 frame:SetPoint("TOP", UIParent, "TOP", 0, -50)
 frame:SetMovable(true)
 frame:EnableMouse(true)
@@ -75,95 +86,76 @@ sessionTimeText:SetText(string.format(L.time, "0s", ""))
 local buttonsY = -5
 local buttonSize = 20
 
--- Pause/Start button with icon
+-- Pause/Start button with text
 local toggleButton = CreateFrame("Button", nil, frame)
-toggleButton:SetSize(buttonSize, buttonSize)
-toggleButton:SetPoint("TOP", sessionTimeText, "BOTTOM", -buttonSize, buttonsY)
+toggleButton:SetSize(buttonSize + 20, buttonSize)
+toggleButton:SetPoint("TOP", sessionTimeText, "BOTTOM", -buttonSize - 10, buttonsY)
 
 -- Button background
 local toggleBg = toggleButton:CreateTexture(nil, "BACKGROUND")
 toggleBg:SetAllPoints(true)
 toggleBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
 
--- Pause icon
-local pauseIcon = toggleButton:CreateTexture(nil, "ARTWORK")
-pauseIcon:SetTexture("Interface\\AddOns\\XPTrackerClassicMoP\\assets\\pause")
-pauseIcon:SetAllPoints(true)
-pauseIcon:SetVertexColor(1, 1, 1) -- White color
-
--- Play icon
-local playIcon = toggleButton:CreateTexture(nil, "ARTWORK")
-playIcon:SetTexture("Interface\\AddOns\\XPTrackerClassicMoP\\assets\\play")
-playIcon:SetAllPoints(true)
-playIcon:SetVertexColor(1, 1, 1) -- White color
-playIcon:Hide()
+-- Button text
+local toggleText = toggleButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+toggleText:SetPoint("CENTER", 0, 0)
+toggleText:SetText("Pause")
+toggleText:SetTextColor(1, 1, 1)
 
 -- Hover effect
 toggleButton:SetScript("OnEnter", function(self)
     toggleBg:SetColorTexture(0.3, 0.3, 0.3, 0.8)
-    GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText(isTracking and "Pause" or "Start")
-    GameTooltip:Show()
 end)
 toggleButton:SetScript("OnLeave", function(self)
     toggleBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
-    GameTooltip:Hide()
 end)
 
--- Reset button with icon
+-- Reset button with text
 local resetButton = CreateFrame("Button", nil, frame)
-resetButton:SetSize(buttonSize, buttonSize)
-resetButton:SetPoint("LEFT", toggleButton, "RIGHT", 0, 0) -- No space between buttons
+resetButton:SetSize(buttonSize + 20, buttonSize)
+resetButton:SetPoint("LEFT", toggleButton, "RIGHT", 2, 0)
 
 -- Button background
 local resetBg = resetButton:CreateTexture(nil, "BACKGROUND")
 resetBg:SetAllPoints(true)
 resetBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
 
--- Reset icon
-local resetIcon = resetButton:CreateTexture(nil, "ARTWORK")
-resetIcon:SetTexture("Interface\\AddOns\\XPTrackerClassicMoP\\assets\\reset")
-resetIcon:SetAllPoints(true)
-resetIcon:SetVertexColor(1, 1, 1) -- White color
+-- Button text
+local resetText = resetButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+resetText:SetPoint("CENTER", 0, 0)
+resetText:SetText("Reset")
+resetText:SetTextColor(1, 1, 1)
 
 -- Hover effect
 resetButton:SetScript("OnEnter", function(self)
     resetBg:SetColorTexture(0.3, 0.3, 0.3, 0.8)
-    GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText("Reset")
-    GameTooltip:Show()
 end)
 resetButton:SetScript("OnLeave", function(self)
     resetBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
-    GameTooltip:Hide()
 end)
 
--- Config button (using text since no config icon)
+-- Config button with text
 local configButton = CreateFrame("Button", nil, frame)
-configButton:SetSize(buttonSize, buttonSize)
-configButton:SetPoint("LEFT", resetButton, "RIGHT", 0, 0) -- No space between buttons
+configButton:SetSize(buttonSize + 20, buttonSize)
+configButton:SetPoint("LEFT", resetButton, "RIGHT", 2, 0)
 
 -- Button background
 local configBg = configButton:CreateTexture(nil, "BACKGROUND")
 configBg:SetAllPoints(true)
 configBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
 
--- Config text/icon
+-- Button text
 local configText = configButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
 configText:SetPoint("CENTER", 0, 0)
-configText:SetText("⚙")
-configText:SetTextColor(1, 1, 1) -- White color
+configText:SetText("Config")
+configText:SetTextColor(1, 1, 1)
 
 -- Hover effect
 configButton:SetScript("OnEnter", function(self)
     configBg:SetColorTexture(0.3, 0.3, 0.3, 0.8)
-    GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText("Config")
-    GameTooltip:Show()
 end)
 configButton:SetScript("OnLeave", function(self)
     configBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
-    GameTooltip:Hide()
 end)
 
 
@@ -321,8 +313,7 @@ local function ResetStats()
     pausedTime = 0
     pauseStartTime = 0
     isTracking = true
-    pauseIcon:Show()
-    playIcon:Hide()
+    toggleText:SetText("Pause")
     pendingReset = false
     print(L.statsReset)
     UpdateDisplay()
@@ -352,18 +343,16 @@ end
 -- Toggle button (Start/Pause) click handler
 toggleButton:SetScript("OnClick", function(self)
     if isTracking then
-        -- Pause - show play icon
+        -- Pause - change text to Start
         isTracking = false
         pauseStartTime = time()
-        pauseIcon:Hide()
-        playIcon:Show()
+        toggleText:SetText("Start")
         print(L.sessionPaused)
     else
-        -- Resume - show pause icon
+        -- Resume - change text to Pause
         isTracking = true
         pausedTime = pausedTime + (time() - pauseStartTime)
-        pauseIcon:Show()
-        playIcon:Hide()
+        toggleText:SetText("Pause")
         print(L.sessionResumed)
     end
     UpdateDisplay()
@@ -419,8 +408,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
         pauseStartTime = 0
         isTracking = true
         pendingReset = false
-        pauseIcon:Show()
-        playIcon:Hide()
+        toggleText:SetText("Pause")
         -- Hide buttons by default
         toggleButton:Hide()
         resetButton:Hide()
@@ -471,9 +459,7 @@ SlashCmdList["XPTRACKER"] = function(msg)
         if isTracking then
             isTracking = false
             pauseStartTime = time()
-            pauseIcon1:Hide()
-            pauseIcon2:Hide()
-            playIcon:Show()
+            toggleText:SetText("Start")
             print(L.sessionPaused)
         else
             print(L.alreadyPaused)
@@ -483,9 +469,7 @@ SlashCmdList["XPTRACKER"] = function(msg)
         if not isTracking then
             isTracking = true
             pausedTime = pausedTime + (time() - pauseStartTime)
-            pauseIcon1:Show()
-            pauseIcon2:Show()
-            playIcon:Hide()
+            toggleText:SetText("Pause")
             print(L.sessionResumed)
         else
             print(L.alreadyActive)
