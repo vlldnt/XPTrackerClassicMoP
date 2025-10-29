@@ -38,7 +38,7 @@ XPT.fontNames = fontNames
 
 -- Main frame
 local frame = CreateFrame("Frame", "XPTrackerFrame", UIParent)
-frame:SetSize(180, 80)
+frame:SetSize(220, 80)
 frame:SetPoint("TOP", UIParent, "TOP", 0, -50)
 frame:SetMovable(true)
 frame:EnableMouse(true)
@@ -54,19 +54,24 @@ bg:SetColorTexture(0, 0, 0, 0.4)
 -- Main text (XP/h)
 local text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 text:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -10)
-text:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -10, -10)
 text:SetText(string.format(L.xpPerHour, L.calculating))
+text:SetJustifyH("LEFT")
+
+-- Percentage per hour text (smaller, size 14)
+local percentText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+percentText:SetPoint("LEFT", text, "RIGHT", 3, 0)
+percentText:SetText("")
 
 -- Secondary text (time to next level)
 local timeText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 timeText:SetPoint("TOPLEFT", text, "BOTTOMLEFT", 0, -5)
-timeText:SetPoint("TOPRIGHT", text, "BOTTOMRIGHT", 0, -5)
+timeText:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -10, -10)
 timeText:SetText("")
 
 -- Session time text
 local sessionTimeText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 sessionTimeText:SetPoint("TOPLEFT", timeText, "BOTTOMLEFT", 0, -5)
-sessionTimeText:SetPoint("TOPRIGHT", timeText, "BOTTOMRIGHT", 0, -5)
+sessionTimeText:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -10, -10)
 sessionTimeText:SetText(string.format(L.time, "0s", ""))
 
 -- Buttons container
@@ -255,10 +260,12 @@ local function ApplyFont()
     local fontChoice = XPTrackerSettings.font or "FRIZQT"
     local fontPath = fontPaths[fontChoice] or fontPaths["FRIZQT"]
     local _, _, flags = text:GetFont()
-    -- Fixed font size at 18
-    text:SetFont(fontPath, 18, flags or "OUTLINE")
-    timeText:SetFont(fontPath, 18, flags or "OUTLINE")
-    sessionTimeText:SetFont(fontPath, 18, flags or "OUTLINE")
+    -- Fixed font size at 16 for main text
+    text:SetFont(fontPath, 16, flags or "OUTLINE")
+    -- Smaller size (14) for percentage text with italic style
+    percentText:SetFont(fontPath, 14, "OUTLINE, MONOCHROME")
+    timeText:SetFont(fontPath, 16, flags or "OUTLINE")
+    sessionTimeText:SetFont(fontPath, 16, flags or "OUTLINE")
 end
 
 -- Function to apply background opacity
@@ -321,17 +328,17 @@ local function UpdateDisplay()
         xpPerHour = math.floor((sessionXP / elapsedTime) * 3600)
     end
 
-    -- Display XP/h with green color for value and percentage per hour
+    -- Display XP/h with green color for value
     local xpValue = xpPerHour > 0 and FormatNumber(xpPerHour) or L.calculating
     local xpFormatted = L.xpPerHour:gsub("%%s", "|cff00ff00%%s|r")
+    text:SetText(string.format(xpFormatted, xpValue))
     
-    -- Add percentage per hour in smaller font
+    -- Display percentage per hour in separate smaller text (size 14)
     if xpPerHour > 0 and maxXP > 0 then
         local percentRate = (xpPerHour / maxXP) * 100
-        local percentText = string.format(" |cffaaaaaa(|r|cff00ff00%.1f%%/h|r|cffaaaaaa)|r", percentRate)
-        text:SetText(string.format(xpFormatted, xpValue) .. percentText)
+        percentText:SetText(string.format("|cffaaaaaa(|r|cff7fff7f%.1f%%/h|r|cffaaaaaa)|r", percentRate))
     else
-        text:SetText(string.format(xpFormatted, xpValue))
+        percentText:SetText("")
     end
 
     -- Display session time with yellow color for value
