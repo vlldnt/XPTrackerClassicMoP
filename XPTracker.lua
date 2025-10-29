@@ -47,18 +47,6 @@ frame:RegisterForDrag("LeftButton")
 frame:SetScript("OnDragStart", frame.StartMoving)
 frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
 
--- Show/hide buttons on hover
-frame:SetScript("OnEnter", function(self)
-    toggleButton:Show()
-    resetButton:Show()
-    configButton:Show()
-end)
-frame:SetScript("OnLeave", function(self)
-    toggleButton:Hide()
-    resetButton:Hide()
-    configButton:Hide()
-end)
-
 -- Background (transparent)
 local bg = frame:CreateTexture(nil, "BACKGROUND")
 bg:SetAllPoints(true)
@@ -105,9 +93,17 @@ toggleText:SetTextColor(1, 1, 1)
 -- Hover effect
 toggleButton:SetScript("OnEnter", function(self)
     toggleBg:SetColorTexture(0.3, 0.3, 0.3, 0.8)
+    -- Keep buttons visible when hovering over them
+    if hideTimer then
+        hideTimer:Cancel()
+    end
+    toggleButton:Show()
+    resetButton:Show()
+    configButton:Show()
 end)
 toggleButton:SetScript("OnLeave", function(self)
     toggleBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+    HideButtonsWithDelay()
 end)
 
 -- Reset button with text
@@ -129,9 +125,17 @@ resetText:SetTextColor(1, 1, 1)
 -- Hover effect
 resetButton:SetScript("OnEnter", function(self)
     resetBg:SetColorTexture(0.3, 0.3, 0.3, 0.8)
+    -- Keep buttons visible when hovering over them
+    if hideTimer then
+        hideTimer:Cancel()
+    end
+    toggleButton:Show()
+    resetButton:Show()
+    configButton:Show()
 end)
 resetButton:SetScript("OnLeave", function(self)
     resetBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+    HideButtonsWithDelay()
 end)
 
 -- Config button with text
@@ -153,9 +157,50 @@ configText:SetTextColor(1, 1, 1)
 -- Hover effect
 configButton:SetScript("OnEnter", function(self)
     configBg:SetColorTexture(0.3, 0.3, 0.3, 0.8)
+    -- Keep buttons visible when hovering over them
+    if hideTimer then
+        hideTimer:Cancel()
+    end
+    toggleButton:Show()
+    resetButton:Show()
+    configButton:Show()
 end)
 configButton:SetScript("OnLeave", function(self)
     configBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+    HideButtonsWithDelay()
+end)
+
+-- Hide buttons by default
+toggleButton:Hide()
+resetButton:Hide()
+configButton:Hide()
+
+-- Timer to hide buttons with delay
+local hideTimer = nil
+local function HideButtonsWithDelay()
+    if hideTimer then
+        hideTimer:Cancel()
+    end
+    hideTimer = C_Timer.NewTimer(0.2, function()
+        if not frame:IsMouseOver() and not toggleButton:IsMouseOver() and not resetButton:IsMouseOver() and not configButton:IsMouseOver() then
+            toggleButton:Hide()
+            resetButton:Hide()
+            configButton:Hide()
+        end
+    end)
+end
+
+-- Show/hide buttons on frame hover
+frame:SetScript("OnEnter", function(self)
+    if hideTimer then
+        hideTimer:Cancel()
+    end
+    toggleButton:Show()
+    resetButton:Show()
+    configButton:Show()
+end)
+frame:SetScript("OnLeave", function(self)
+    HideButtonsWithDelay()
 end)
 
 
@@ -240,14 +285,16 @@ local function UpdateDisplay()
         text:SetText(L.maxLevel)
         timeText:SetText("")
         sessionTimeText:SetText("")
-        toggleButton:Hide()
-        resetButton:Hide()
-        configButton:Hide()
+        -- Disable button functionality at max level but keep hover behavior
+        toggleButton:SetEnabled(false)
+        resetButton:SetEnabled(false)
+        configButton:SetEnabled(false)
         return
     else
-        toggleButton:Show()
-        resetButton:Show()
-        configButton:Show()
+        -- Re-enable buttons if previously disabled
+        toggleButton:SetEnabled(true)
+        resetButton:SetEnabled(true)
+        configButton:SetEnabled(true)
     end
 
     local currentXP = UnitXP("player")
