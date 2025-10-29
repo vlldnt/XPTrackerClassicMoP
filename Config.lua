@@ -4,9 +4,12 @@ local _, XPT = ...
 -- Wait for addon to be fully loaded
 local initFrame = CreateFrame("Frame")
 initFrame:RegisterEvent("ADDON_LOADED")
-initFrame:SetScript("OnEvent", function(self, event, addonName)
-    if addonName ~= "XPTracker" then return end
-    self:UnregisterEvent("ADDON_LOADED")
+initFrame:RegisterEvent("PLAYER_LOGIN")
+
+local configInitialized = false
+
+local function InitializeConfig()
+    if configInitialized then return end
 
     local L = XPT.L
     if not L then
@@ -14,9 +17,11 @@ initFrame:SetScript("OnEvent", function(self, event, addonName)
         return
     end
 
+    configInitialized = true
+
     -- Create the main config frame
     local configFrame = CreateFrame("Frame", "XPTrackerConfigFrame", UIParent)
-    configFrame:SetSize(500, 600)
+    configFrame:SetSize(420, 480)
     configFrame:SetPoint("CENTER")
     configFrame:Hide()
     configFrame:EnableMouse(true)
@@ -50,18 +55,18 @@ initFrame:SetScript("OnEvent", function(self, event, addonName)
 
     -- Content frame
     local content = CreateFrame("Frame", nil, configFrame)
-    content:SetPoint("TOPLEFT", 20, -70)
-    content:SetPoint("BOTTOMRIGHT", -20, 60)
+    content:SetPoint("TOPLEFT", 15, -60)
+    content:SetPoint("BOTTOMRIGHT", -15, 50)
 
     -- ===========================
     -- SECTION: Text Alignment
     -- ===========================
     local alignSection = content:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-    alignSection:SetPoint("TOPLEFT", content, "TOPLEFT", 10, -10)
+    alignSection:SetPoint("TOPLEFT", content, "TOPLEFT", 5, -5)
     alignSection:SetText("|cffffd700" .. L.alignmentSection .. "|r")
 
     local alignDesc = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    alignDesc:SetPoint("TOPLEFT", alignSection, "BOTTOMLEFT", 0, -5)
+    alignDesc:SetPoint("TOPLEFT", alignSection, "BOTTOMLEFT", 0, -3)
     alignDesc:SetText(L.alignmentDesc)
     alignDesc:SetTextColor(0.8, 0.8, 0.8)
 
@@ -102,125 +107,131 @@ initFrame:SetScript("OnEvent", function(self, event, addonName)
     end
 
     -- ===========================
-    -- SECTION: Colors
+    -- SECTION: Scale & Font Size
     -- ===========================
-    local colorSection = content:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-    colorSection:SetPoint("TOPLEFT", alignDesc, "BOTTOMLEFT", 0, -60)
-    colorSection:SetText("|cffffd700" .. L.colorsSection .. "|r")
+    local scaleSection = content:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+    scaleSection:SetPoint("TOPLEFT", alignDesc, "BOTTOMLEFT", 0, -50)
+    scaleSection:SetText("|cffffd700" .. (L.scaleSection or "Scale & Font") .. "|r")
 
-    local colorDesc = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    colorDesc:SetPoint("TOPLEFT", colorSection, "BOTTOMLEFT", 0, -5)
-    colorDesc:SetText(L.colorsDesc)
-    colorDesc:SetTextColor(0.8, 0.8, 0.8)
+    -- Scale Slider
+    local scaleLabel = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    scaleLabel:SetPoint("TOPLEFT", scaleSection, "BOTTOMLEFT", 5, -8)
+    scaleLabel:SetText((L.scaleLabel or "Interface Scale") .. ": " .. string.format("%.0f%%", (XPTrackerSettings.scale or 1.0) * 100))
 
-    local colorOptions = {
-        {key = "xpRateLabel", label = L.colorXpLabel, example = "XP/h:"},
-        {key = "xpRateValue", label = L.colorXpValue, example = "12.5k"},
-        {key = "levelLabel", label = L.colorLevelLabel, example = "Level 60:"},
-        {key = "levelValue", label = L.colorLevelValue, example = "2h 15m"},
-        {key = "timeLabel", label = L.colorTimeLabel, example = "Time:"},
-        {key = "timeValue", label = L.colorTimeValue, example = "1h 30m"},
-        {key = "maxLevel", label = L.colorMaxLevel, example = L.maxLevel},
+    local scaleSlider = CreateFrame("Slider", "XPTConfigScaleSlider", content, "OptionsSliderTemplate")
+    scaleSlider:SetPoint("TOPLEFT", scaleLabel, "BOTTOMLEFT", 0, -8)
+    scaleSlider:SetMinMaxValues(50, 200)
+    scaleSlider:SetValue((XPTrackerSettings.scale or 1.0) * 100)
+    scaleSlider:SetValueStep(5)
+    scaleSlider:SetObeyStepOnDrag(true)
+    scaleSlider:SetWidth(200)
+    _G[scaleSlider:GetName() .. 'Low']:SetText('50%')
+    _G[scaleSlider:GetName() .. 'High']:SetText('200%')
+    _G[scaleSlider:GetName() .. 'Text']:SetText('')
+    scaleSlider:SetScript("OnValueChanged", function(self, value)
+        XPTrackerSettings.scale = value / 100
+        scaleLabel:SetText((L.scaleLabel or "Interface Scale") .. ": " .. string.format("%.0f%%", value))
+        if XPT.ApplyScale then XPT.ApplyScale() end
+    end)
+
+    -- Font Size Slider
+    local fontLabel = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    fontLabel:SetPoint("TOPLEFT", scaleSlider, "BOTTOMLEFT", 0, -15)
+    fontLabel:SetText((L.fontSizeLabel or "Font Size") .. ": " .. (XPTrackerSettings.fontSize or 14))
+
+    local fontSlider = CreateFrame("Slider", "XPTConfigFontSlider", content, "OptionsSliderTemplate")
+    fontSlider:SetPoint("TOPLEFT", fontLabel, "BOTTOMLEFT", 0, -8)
+    fontSlider:SetMinMaxValues(10, 24)
+    fontSlider:SetValue(XPTrackerSettings.fontSize or 14)
+    fontSlider:SetValueStep(1)
+    fontSlider:SetObeyStepOnDrag(true)
+    fontSlider:SetWidth(200)
+    _G[fontSlider:GetName() .. 'Low']:SetText('10')
+    _G[fontSlider:GetName() .. 'High']:SetText('24')
+    _G[fontSlider:GetName() .. 'Text']:SetText('')
+    fontSlider:SetScript("OnValueChanged", function(self, value)
+        XPTrackerSettings.fontSize = value
+        fontLabel:SetText((L.fontSizeLabel or "Font Size") .. ": " .. value)
+        if XPT.ApplyFontSize then XPT.ApplyFontSize() end
+        if XPT.UpdateDisplay then XPT.UpdateDisplay() end
+    end)
+
+    -- Background Opacity Slider
+    local opacityLabel = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    opacityLabel:SetPoint("TOPLEFT", fontSlider, "BOTTOMLEFT", 0, -15)
+    opacityLabel:SetText((L.opacityLabel or "Background Opacity") .. ": " .. string.format("%.0f%%", (XPTrackerSettings.bgOpacity or 0.4) * 100))
+
+    local opacitySlider = CreateFrame("Slider", "XPTConfigOpacitySlider", content, "OptionsSliderTemplate")
+    opacitySlider:SetPoint("TOPLEFT", opacityLabel, "BOTTOMLEFT", 0, -8)
+    opacitySlider:SetMinMaxValues(0, 100)
+    opacitySlider:SetValue((XPTrackerSettings.bgOpacity or 0.4) * 100)
+    opacitySlider:SetValueStep(5)
+    opacitySlider:SetObeyStepOnDrag(true)
+    opacitySlider:SetWidth(200)
+    _G[opacitySlider:GetName() .. 'Low']:SetText('0%')
+    _G[opacitySlider:GetName() .. 'High']:SetText('100%')
+    _G[opacitySlider:GetName() .. 'Text']:SetText('')
+    opacitySlider:SetScript("OnValueChanged", function(self, value)
+        XPTrackerSettings.bgOpacity = value / 100
+        opacityLabel:SetText((L.opacityLabel or "Background Opacity") .. ": " .. string.format("%.0f%%", value))
+        if XPT.ApplyBackgroundOpacity then XPT.ApplyBackgroundOpacity() end
+    end)
+
+    -- ===========================
+    -- SECTION: Font Selection
+    -- ===========================
+    local fontSection = content:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+    fontSection:SetPoint("TOPLEFT", opacitySlider, "BOTTOMLEFT", 0, -25)
+    fontSection:SetText("|cffffd700" .. (L.fontSection or "Font") .. "|r")
+
+    local fontDesc = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    fontDesc:SetPoint("TOPLEFT", fontSection, "BOTTOMLEFT", 0, -3)
+    fontDesc:SetText(L.fontDesc or "Choose text font")
+    fontDesc:SetTextColor(0.8, 0.8, 0.8)
+
+    local fontButtons = {}
+    local fontOptions = {
+        {value = "FRIZQT", label = "Friz Quadrata", x = 0},
+        {value = "ARIALN", label = "Arial Narrow", x = 110},
+        {value = "SKURRI", label = "Skurri", x = 220},
+        {value = "MORPHEUS", label = "Morpheus", x = 55, y = -40}
     }
 
-    local colorButtons = {}
-    local yOffset = -10
-
-    for i, opt in ipairs(colorOptions) do
-        -- Container
-        local container = CreateFrame("Frame", nil, content)
-        container:SetPoint("TOPLEFT", colorDesc, "BOTTOMLEFT", 0, yOffset)
-        container:SetSize(450, 35)
-
-        -- Background
-        local itemBg = container:CreateTexture(nil, "BACKGROUND")
-        itemBg:SetAllPoints(true)
-        if i % 2 == 0 then
-            itemBg:SetColorTexture(0.1, 0.1, 0.1, 0.3)
-        else
-            itemBg:SetColorTexture(0.15, 0.15, 0.15, 0.3)
+    local function UpdateFontButtons()
+        for _, btn in ipairs(fontButtons) do
+            if btn.value == XPTrackerSettings.font then
+                btn:LockHighlight()
+                btn:SetAlpha(1)
+            else
+                btn:UnlockHighlight()
+                btn:SetAlpha(0.7)
+            end
         end
+    end
 
-        -- Label
-        local label = container:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-        label:SetPoint("LEFT", 10, 0)
-        label:SetText(opt.label)
-        label:SetWidth(120)
-        label:SetJustifyH("LEFT")
+    for _, opt in ipairs(fontOptions) do
+        local btn = CreateFrame("Button", nil, content, "UIPanelButtonTemplate")
+        btn:SetPoint("TOPLEFT", fontDesc, "BOTTOMLEFT", opt.x, opt.y or -10)
+        btn:SetSize(100, 30)
+        btn:SetText(opt.label)
+        btn.value = opt.value
 
-        -- Example text
-        local exampleText = container:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-        exampleText:SetPoint("LEFT", label, "RIGHT", 10, 0)
-        exampleText:SetText(opt.example)
-        exampleText:SetWidth(150)
-        exampleText:SetJustifyH("LEFT")
-
-        -- Color swatch button
-        local colorBtn = CreateFrame("Button", nil, container)
-        colorBtn:SetSize(30, 30)
-        colorBtn:SetPoint("RIGHT", -10, 0)
-
-        local colorTexture = colorBtn:CreateTexture(nil, "ARTWORK")
-        colorTexture:SetAllPoints(true)
-
-        local colorBorder = colorBtn:CreateTexture(nil, "OVERLAY")
-        colorBorder:SetTexture("Interface\\ChatFrame\\ChatFrameBackground")
-        colorBorder:SetPoint("TOPLEFT", -1, 1)
-        colorBorder:SetPoint("BOTTOMRIGHT", 1, -1)
-        colorBorder:SetColorTexture(0, 0, 0)
-
-        colorBtn:SetScript("OnEnter", function(self)
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText(L.colorTooltip)
-            GameTooltip:Show()
+        btn:SetScript("OnClick", function(self)
+            XPTrackerSettings.font = self.value
+            if XPT.ApplyFontSize then XPT.ApplyFontSize() end
+            if XPT.UpdateDisplay then XPT.UpdateDisplay() end
+            UpdateFontButtons()
         end)
 
-        colorBtn:SetScript("OnLeave", function(self)
-            GameTooltip:Hide()
-        end)
-
-        colorBtn:SetScript("OnClick", function(self)
-            local c = XPTrackerSettings.colors[opt.key]
-
-            local function UpdateColor()
-                local r, g, b = ColorPickerFrame:GetColorRGB()
-                XPTrackerSettings.colors[opt.key] = {r = r, g = g, b = b}
-                colorTexture:SetColorTexture(r, g, b)
-                exampleText:SetTextColor(r, g, b)
-                if XPT.UpdateDisplay then XPT.UpdateDisplay() end
-            end
-
-            ColorPickerFrame.func = UpdateColor
-            ColorPickerFrame.opacityFunc = UpdateColor
-            ColorPickerFrame.cancelFunc = function(prev)
-                XPTrackerSettings.colors[opt.key] = {r = prev.r, g = prev.g, b = prev.b}
-                colorTexture:SetColorTexture(prev.r, prev.g, prev.b)
-                exampleText:SetTextColor(prev.r, prev.g, prev.b)
-                if XPT.UpdateDisplay then XPT.UpdateDisplay() end
-            end
-
-            ColorPickerFrame.previousValues = {r = c.r, g = c.g, b = c.b}
-            ColorPickerFrame:SetColorRGB(c.r, c.g, c.b)
-            ColorPickerFrame.hasOpacity = false
-            ColorPickerFrame:Show()
-        end)
-
-        -- Store references
-        colorBtn.texture = colorTexture
-        colorBtn.example = exampleText
-        colorBtn.colorKey = opt.key
-
-        table.insert(colorButtons, colorBtn)
-
-        yOffset = yOffset - 40
+        table.insert(fontButtons, btn)
     end
 
     -- ===========================
     -- RESET BUTTON
     -- ===========================
     local resetBtn = CreateFrame("Button", nil, configFrame, "UIPanelButtonTemplate")
-    resetBtn:SetPoint("BOTTOM", 0, 20)
-    resetBtn:SetSize(200, 35)
+    resetBtn:SetPoint("BOTTOM", 0, 15)
+    resetBtn:SetSize(180, 30)
     resetBtn:SetText(L.resetDefault)
 
     resetBtn:SetScript("OnClick", function(self)
@@ -248,10 +259,21 @@ initFrame:SetScript("OnEvent", function(self, event, addonName)
                 end
 
                 if XPT.ApplyTextAlignment then XPT.ApplyTextAlignment() end
+                if XPT.ApplyScale then XPT.ApplyScale() end
+                if XPT.ApplyFontSize then XPT.ApplyFontSize() end
+                if XPT.ApplyBackgroundOpacity then XPT.ApplyBackgroundOpacity() end
                 if XPT.UpdateDisplay then XPT.UpdateDisplay() end
 
                 UpdateAlignmentButtons()
-                UpdateColorDisplay()
+                UpdateFontButtons()
+
+                -- Update sliders
+                scaleSlider:SetValue((XPTrackerSettings.scale or 1.0) * 100)
+                scaleLabel:SetText((L.scaleLabel or "Interface Scale") .. ": " .. string.format("%.0f%%", (XPTrackerSettings.scale or 1.0) * 100))
+                fontSlider:SetValue(XPTrackerSettings.fontSize or 14)
+                fontLabel:SetText((L.fontSizeLabel or "Font Size") .. ": " .. (XPTrackerSettings.fontSize or 14))
+                opacitySlider:SetValue((XPTrackerSettings.bgOpacity or 0.4) * 100)
+                opacityLabel:SetText((L.opacityLabel or "Background Opacity") .. ": " .. string.format("%.0f%%", (XPTrackerSettings.bgOpacity or 0.4) * 100))
 
                 print("|cff00ff00XP Tracker:|r " .. L.configReset)
             end,
@@ -266,24 +288,9 @@ initFrame:SetScript("OnEvent", function(self, event, addonName)
     -- ===========================
     -- UPDATE FUNCTIONS
     -- ===========================
-    local function UpdateColorDisplay()
-        for i, btn in ipairs(colorButtons) do
-            if btn and btn.colorKey and XPTrackerSettings.colors[btn.colorKey] then
-                local c = XPTrackerSettings.colors[btn.colorKey]
-                if btn.texture then
-                    btn.texture:SetColorTexture(c.r, c.g, c.b)
-                end
-                if btn.example then
-                    btn.example:SetTextColor(c.r, c.g, c.b)
-                    btn.example:SetText(colorOptions[i].example)
-                end
-            end
-        end
-    end
-
     configFrame:SetScript("OnShow", function(self)
         UpdateAlignmentButtons()
-        UpdateColorDisplay()
+        UpdateFontButtons()
     end)
 
     -- ===========================
@@ -296,4 +303,16 @@ initFrame:SetScript("OnEvent", function(self, event, addonName)
     XPT.configFrame = configFrame
 
     print("|cff00ff00XP Tracker:|r " .. L.configLoaded)
+end
+
+-- Event handler
+initFrame:SetScript("OnEvent", function(self, event, addonName)
+    if event == "ADDON_LOADED" and addonName == "XPTrackerClassicMoP" then
+        -- Try to initialize immediately
+        InitializeConfig()
+    elseif event == "PLAYER_LOGIN" then
+        -- Initialize on login as fallback
+        InitializeConfig()
+        self:UnregisterAllEvents()
+    end
 end)

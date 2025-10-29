@@ -2,18 +2,21 @@
 local _, XPT = ...
 local L = XPT.L
 
+-- Font mapping
+local fontPaths = {
+    FRIZQT = "Fonts\\FRIZQT__.TTF",
+    ARIALN = "Fonts\\ARIALN.TTF",
+    SKURRI = "Fonts\\SKURRI.TTF",
+    MORPHEUS = "Fonts\\MORPHEUS.TTF"
+}
+
 -- Default settings
 local defaultSettings = {
     textAlign = "LEFT",  -- LEFT, CENTER, RIGHT
-    colors = {
-        xpRateLabel = {r = 1, g = 1, b = 1},      -- "XP/h:" label
-        xpRateValue = {r = 0, g = 1, b = 0},      -- XP rate value (green)
-        levelLabel = {r = 1, g = 1, b = 1},       -- "Level X:" label
-        levelValue = {r = 1, g = 1, b = 1},       -- Time value
-        timeLabel = {r = 1, g = 1, b = 1},        -- "Time:" label
-        timeValue = {r = 1, g = 1, b = 1},        -- Time value
-        maxLevel = {r = 1, g = 0.843, b = 0},     -- Max level text (gold)
-    }
+    scale = 1.0,         -- Interface scale (0.5 to 2.0)
+    fontSize = 14,       -- Font size for main text (10 to 24)
+    bgOpacity = 0.4,     -- Background opacity (0 to 1)
+    font = "FRIZQT",     -- Font choice
 }
 
 -- Initialize saved variables
@@ -21,10 +24,11 @@ XPTrackerSettings = XPTrackerSettings or CopyTable(defaultSettings)
 
 -- Expose default settings for config panel
 XPT.defaultSettings = defaultSettings
+XPT.fontPaths = fontPaths
 
 -- Main frame
 local frame = CreateFrame("Frame", "XPTrackerFrame", UIParent)
-frame:SetSize(300, 100)
+frame:SetSize(250, 80)
 frame:SetPoint("TOP", UIParent, "TOP", 0, -50)
 frame:SetMovable(true)
 frame:EnableMouse(true)
@@ -32,98 +36,136 @@ frame:RegisterForDrag("LeftButton")
 frame:SetScript("OnDragStart", frame.StartMoving)
 frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
 
+-- Show/hide buttons on hover
+frame:SetScript("OnEnter", function(self)
+    toggleButton:Show()
+    resetButton:Show()
+    configButton:Show()
+end)
+frame:SetScript("OnLeave", function(self)
+    toggleButton:Hide()
+    resetButton:Hide()
+    configButton:Hide()
+end)
+
 -- Background (transparent)
 local bg = frame:CreateTexture(nil, "BACKGROUND")
 bg:SetAllPoints(true)
-bg:SetColorTexture(0, 0, 0, 0)
+bg:SetColorTexture(0, 0, 0, 0.4)
 
 -- Main text (XP/h)
 local text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-text:SetPoint("TOP", frame, "TOP", 0, -10)
-text:SetWidth(280)
+text:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -10)
+text:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -10, -10)
 text:SetText(string.format(L.xpPerHour, L.calculating))
 
 -- Secondary text (time to next level)
 local timeText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-timeText:SetPoint("TOP", text, "BOTTOM", 0, -5)
-timeText:SetWidth(280)
+timeText:SetPoint("TOPLEFT", text, "BOTTOMLEFT", 0, -5)
+timeText:SetPoint("TOPRIGHT", text, "BOTTOMRIGHT", 0, -5)
 timeText:SetText("")
 
 -- Session time text
 local sessionTimeText = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-sessionTimeText:SetPoint("TOP", timeText, "BOTTOM", 0, -5)
-sessionTimeText:SetWidth(280)
+sessionTimeText:SetPoint("TOPLEFT", timeText, "BOTTOMLEFT", 0, -5)
+sessionTimeText:SetPoint("TOPRIGHT", timeText, "BOTTOMRIGHT", 0, -5)
 sessionTimeText:SetText(string.format(L.time, "0s", ""))
 
 -- Buttons container
 local buttonsY = -5
+local buttonSize = 20
 
 -- Pause/Start button with icon
-local toggleButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-toggleButton:SetSize(28, 28)
-toggleButton:SetPoint("TOP", sessionTimeText, "BOTTOM", -45, buttonsY)
+local toggleButton = CreateFrame("Button", nil, frame)
+toggleButton:SetSize(buttonSize, buttonSize)
+toggleButton:SetPoint("TOP", sessionTimeText, "BOTTOM", -buttonSize, buttonsY)
 
--- Pause icon (two bars)
-local pauseIcon1 = toggleButton:CreateTexture(nil, "OVERLAY")
-pauseIcon1:SetSize(4, 12)
-pauseIcon1:SetPoint("CENTER", -3, 0)
-pauseIcon1:SetColorTexture(1, 1, 1)
+-- Button background
+local toggleBg = toggleButton:CreateTexture(nil, "BACKGROUND")
+toggleBg:SetAllPoints(true)
+toggleBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
 
-local pauseIcon2 = toggleButton:CreateTexture(nil, "OVERLAY")
-pauseIcon2:SetSize(4, 12)
-pauseIcon2:SetPoint("CENTER", 3, 0)
-pauseIcon2:SetColorTexture(1, 1, 1)
+-- Pause icon
+local pauseIcon = toggleButton:CreateTexture(nil, "ARTWORK")
+pauseIcon:SetTexture("Interface\\AddOns\\XPTrackerClassicMoP\\assets\\pause")
+pauseIcon:SetAllPoints(true)
+pauseIcon:SetVertexColor(1, 1, 1) -- White color
 
--- Play icon (triangle)
-local playIcon = toggleButton:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-playIcon:SetPoint("CENTER", 2, 0)
-playIcon:SetText("▶")
-playIcon:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
+-- Play icon
+local playIcon = toggleButton:CreateTexture(nil, "ARTWORK")
+playIcon:SetTexture("Interface\\AddOns\\XPTrackerClassicMoP\\assets\\play")
+playIcon:SetAllPoints(true)
+playIcon:SetVertexColor(1, 1, 1) -- White color
 playIcon:Hide()
 
--- Reset button with icon
-local resetButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-resetButton:SetSize(28, 28)
-resetButton:SetPoint("TOP", sessionTimeText, "BOTTOM", 0, buttonsY)
-
--- Stop icon (square)
-local stopIcon = resetButton:CreateTexture(nil, "OVERLAY")
-stopIcon:SetSize(12, 12)
-stopIcon:SetPoint("CENTER", 0, 0)
-stopIcon:SetColorTexture(1, 1, 1)
-
--- Config button with icon
-local configButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-configButton:SetSize(28, 28)
-configButton:SetPoint("TOP", sessionTimeText, "BOTTOM", 45, buttonsY)
-
--- Config icon (gear)
-local configIcon = configButton:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-configIcon:SetPoint("CENTER", 0, 0)
-configIcon:SetText("⚙")
-configIcon:SetFont("Fonts\\FRIZQT__.TTF", 16, "OUTLINE")
-
--- Tooltips
+-- Hover effect
 toggleButton:SetScript("OnEnter", function(self)
+    toggleBg:SetColorTexture(0.3, 0.3, 0.3, 0.8)
     GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText(isTracking and L.pauseButton or L.startButton)
+    GameTooltip:SetText(isTracking and "Pause" or "Start")
     GameTooltip:Show()
 end)
-toggleButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
+toggleButton:SetScript("OnLeave", function(self)
+    toggleBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+    GameTooltip:Hide()
+end)
 
+-- Reset button with icon
+local resetButton = CreateFrame("Button", nil, frame)
+resetButton:SetSize(buttonSize, buttonSize)
+resetButton:SetPoint("LEFT", toggleButton, "RIGHT", 0, 0) -- No space between buttons
+
+-- Button background
+local resetBg = resetButton:CreateTexture(nil, "BACKGROUND")
+resetBg:SetAllPoints(true)
+resetBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+
+-- Reset icon
+local resetIcon = resetButton:CreateTexture(nil, "ARTWORK")
+resetIcon:SetTexture("Interface\\AddOns\\XPTrackerClassicMoP\\assets\\reset")
+resetIcon:SetAllPoints(true)
+resetIcon:SetVertexColor(1, 1, 1) -- White color
+
+-- Hover effect
 resetButton:SetScript("OnEnter", function(self)
+    resetBg:SetColorTexture(0.3, 0.3, 0.3, 0.8)
     GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText(L.resetButton)
+    GameTooltip:SetText("Reset")
     GameTooltip:Show()
 end)
-resetButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
+resetButton:SetScript("OnLeave", function(self)
+    resetBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+    GameTooltip:Hide()
+end)
 
+-- Config button (using text since no config icon)
+local configButton = CreateFrame("Button", nil, frame)
+configButton:SetSize(buttonSize, buttonSize)
+configButton:SetPoint("LEFT", resetButton, "RIGHT", 0, 0) -- No space between buttons
+
+-- Button background
+local configBg = configButton:CreateTexture(nil, "BACKGROUND")
+configBg:SetAllPoints(true)
+configBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+
+-- Config text/icon
+local configText = configButton:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+configText:SetPoint("CENTER", 0, 0)
+configText:SetText("⚙")
+configText:SetTextColor(1, 1, 1) -- White color
+
+-- Hover effect
 configButton:SetScript("OnEnter", function(self)
+    configBg:SetColorTexture(0.3, 0.3, 0.3, 0.8)
     GameTooltip:SetOwner(self, "ANCHOR_TOP")
-    GameTooltip:SetText(L.configButton)
+    GameTooltip:SetText("Config")
     GameTooltip:Show()
 end)
-configButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
+configButton:SetScript("OnLeave", function(self)
+    configBg:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+    GameTooltip:Hide()
+end)
+
 
 -- Variables
 local startTime = time()
@@ -166,14 +208,34 @@ local function ApplyTextAlignment()
     sessionTimeText:SetJustifyH(align)
 end
 
+-- Function to apply scale
+local function ApplyScale()
+    local scale = XPTrackerSettings.scale or 1.0
+    frame:SetScale(scale)
+end
+
+-- Function to apply font size
+local function ApplyFontSize()
+    local size = XPTrackerSettings.fontSize or 14
+    local fontChoice = XPTrackerSettings.font or "FRIZQT"
+    local fontPath = fontPaths[fontChoice] or fontPaths["FRIZQT"]
+    local _, _, flags = text:GetFont()
+    text:SetFont(fontPath, size, flags or "OUTLINE")
+    timeText:SetFont(fontPath, size - 2, flags or "OUTLINE")
+    sessionTimeText:SetFont(fontPath, size - 2, flags or "OUTLINE")
+end
+
+-- Function to apply background opacity
+local function ApplyBackgroundOpacity()
+    local opacity = XPTrackerSettings.bgOpacity or 0.4
+    bg:SetColorTexture(0, 0, 0, opacity)
+end
+
 -- Expose functions for config panel
 XPT.ApplyTextAlignment = ApplyTextAlignment
-
--- Function to create colored text
-local function ColorText(text, color)
-    return string.format("|cff%02x%02x%02x%s|r",
-        color.r * 255, color.g * 255, color.b * 255, text)
-end
+XPT.ApplyScale = ApplyScale
+XPT.ApplyFontSize = ApplyFontSize
+XPT.ApplyBackgroundOpacity = ApplyBackgroundOpacity
 
 -- Update display function
 local function UpdateDisplay()
@@ -183,17 +245,17 @@ local function UpdateDisplay()
     local maxLevel = GetMaxPlayerLevel and GetMaxPlayerLevel() or 60
 
     if currentLevel >= maxLevel then
-        local c = XPTrackerSettings.colors.maxLevel
-        text:SetTextColor(c.r, c.g, c.b)
         text:SetText(L.maxLevel)
         timeText:SetText("")
         sessionTimeText:SetText("")
         toggleButton:Hide()
         resetButton:Hide()
+        configButton:Hide()
         return
     else
         toggleButton:Show()
         resetButton:Show()
+        configButton:Show()
     end
 
     local currentXP = UnitXP("player")
@@ -221,33 +283,30 @@ local function UpdateDisplay()
         xpPerHour = math.floor((sessionXP / elapsedTime) * 3600)
     end
 
-    -- Display XP/h with colors
+    -- Display XP/h with green color for value
     local xpValue = xpPerHour > 0 and FormatNumber(xpPerHour) or L.calculating
-    local xpText = ColorText(L.xpPerHour:match("^(.-):%s*%%s") or "XP/h", XPTrackerSettings.colors.xpRateLabel) ..
-                   ": " .. ColorText(xpValue, XPTrackerSettings.colors.xpRateValue)
-    text:SetText(xpText)
+    local xpFormatted = L.xpPerHour:gsub("%%s", "|cff00ff00%%s|r")
+    text:SetText(string.format(xpFormatted, xpValue))
 
-    -- Display session time with colors
+    -- Display session time with yellow color for value
     local timeValue = FormatTime(math.floor(elapsedTime)) .. (isTracking and "" or " " .. L.paused)
-    local timeStr = ColorText(L.time:match("^(.-):%s*%%s") or "Time", XPTrackerSettings.colors.timeLabel) ..
-                    ": " .. ColorText(timeValue, XPTrackerSettings.colors.timeValue)
-    sessionTimeText:SetText(timeStr)
+    local timeFormatted = L.time:gsub("%%s", "|cffffff00%%s|r")
+    sessionTimeText:SetText(string.format(timeFormatted, timeValue, ""))
 
-    -- Calculate time remaining with colors
+    -- Calculate time remaining with white level and yellow time
     if xpPerHour > 0 then
         local xpNeeded = maxXP - currentXP
         local timeNeeded = (xpNeeded / xpPerHour) * 3600
         local nextLevel = UnitLevel("player") + 1
-        local levelLabel = L.nextLevel:match("^(.-)%d") or "Level"
-        local levelStr = ColorText(levelLabel:gsub("%%d", tostring(nextLevel)), XPTrackerSettings.colors.levelLabel) ..
-                        ": " .. ColorText(FormatTime(math.floor(timeNeeded)), XPTrackerSettings.colors.levelValue)
-        timeText:SetText(levelStr)
+        -- Replace %d with white and time %s with yellow
+        local levelFormatted = L.nextLevel:gsub("%%d", "|cffffffff%%d|r")
+        levelFormatted = levelFormatted:gsub("%%s", "|cffffff00%%s|r")
+        timeText:SetText(string.format(levelFormatted, nextLevel, FormatTime(math.floor(timeNeeded))))
     else
         local nextLevel = UnitLevel("player") + 1
-        local levelLabel = L.nextLevel:match("^(.-)%d") or "Level"
-        local levelStr = ColorText(levelLabel:gsub("%%d", tostring(nextLevel)), XPTrackerSettings.colors.levelLabel) ..
-                        ": " .. ColorText(L.calculatingTime, XPTrackerSettings.colors.levelValue)
-        timeText:SetText(levelStr)
+        local levelFormatted = L.nextLevel:gsub("%%d", "|cffffffff%%d|r")
+        levelFormatted = levelFormatted:gsub("%%s", "|cffffff00%%s|r")
+        timeText:SetText(string.format(levelFormatted, nextLevel, L.calculatingTime))
     end
 end
 
@@ -262,8 +321,7 @@ local function ResetStats()
     pausedTime = 0
     pauseStartTime = 0
     isTracking = true
-    pauseIcon1:Show()
-    pauseIcon2:Show()
+    pauseIcon:Show()
     playIcon:Hide()
     pendingReset = false
     print(L.statsReset)
@@ -297,16 +355,14 @@ toggleButton:SetScript("OnClick", function(self)
         -- Pause - show play icon
         isTracking = false
         pauseStartTime = time()
-        pauseIcon1:Hide()
-        pauseIcon2:Hide()
+        pauseIcon:Hide()
         playIcon:Show()
         print(L.sessionPaused)
     else
         -- Resume - show pause icon
         isTracking = true
         pausedTime = pausedTime + (time() - pauseStartTime)
-        pauseIcon1:Show()
-        pauseIcon2:Show()
+        pauseIcon:Show()
         playIcon:Hide()
         print(L.sessionResumed)
     end
@@ -350,6 +406,12 @@ frame:SetScript("OnEvent", function(self, event, ...)
             XPTrackerSettings = CopyTable(defaultSettings)
         end
 
+        -- Ensure new settings exist
+        XPTrackerSettings.scale = XPTrackerSettings.scale or 1.0
+        XPTrackerSettings.fontSize = XPTrackerSettings.fontSize or 14
+        XPTrackerSettings.bgOpacity = XPTrackerSettings.bgOpacity or 0.4
+        XPTrackerSettings.font = XPTrackerSettings.font or "FRIZQT"
+
         startTime = time()
         startXP = UnitXP("player")
         sessionXP = 0
@@ -357,12 +419,18 @@ frame:SetScript("OnEvent", function(self, event, ...)
         pauseStartTime = 0
         isTracking = true
         pendingReset = false
-        pauseIcon1:Show()
-        pauseIcon2:Show()
+        pauseIcon:Show()
         playIcon:Hide()
+        -- Hide buttons by default
+        toggleButton:Hide()
+        resetButton:Hide()
+        configButton:Hide()
         local inInstance = IsInInstance()
         wasInInstance = inInstance
         ApplyTextAlignment()
+        ApplyScale()
+        ApplyFontSize()
+        ApplyBackgroundOpacity()
         UpdateDisplay()
     elseif event == "PLAYER_XP_UPDATE" then
         UpdateDisplay()

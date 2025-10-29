@@ -58,7 +58,14 @@ if locale == "frFR" then
         colorTimeLabel = "Label Temps",
         colorTimeValue = "Valeur Temps",
         colorMaxLevel = "Niveau Max",
-        configButton = "Config"
+        configButton = "Config",
+        -- Scale & Font
+        scaleSection = "Échelle & Police",
+        scaleLabel = "Échelle de l'interface",
+        fontSizeLabel = "Taille de la police",
+        opacityLabel = "Opacité du fond",
+        fontSection = "Police d'Écriture",
+        fontDesc = "Choisissez la police de caractères"
     }
 elseif locale == "deDE" then
     XPT.L = {
@@ -88,7 +95,38 @@ elseif locale == "deDE" then
         resetConfirm = "Möchten Sie die Statistiken zurücksetzen?",
         resetCancelled = "Zurücksetzen abgebrochen",
         yes = "Ja",
-        no = "Nein"
+        no = "Nein",
+        -- Config panel
+        configTitle = "Konfiguration",
+        configSubtitle = "Aussehen und Farben anpassen",
+        alignmentSection = "Textausrichtung",
+        alignmentDesc = "Schaltflächen bleiben zentriert",
+        alignLeft = "◄ Links",
+        alignCenter = "• Mitte •",
+        alignRight = "Rechts ►",
+        colorsSection = "Textfarben",
+        colorsDesc = "Klicken Sie auf ein Farbfeld zum Ändern",
+        colorTooltip = "Klicken zum Ändern",
+        resetDefault = "Zurücksetzen",
+        resetConfigConfirm = "Alle Einstellungen zurücksetzen?",
+        configReset = "Einstellungen zurückgesetzt!",
+        configLoaded = "Konfig-Panel geladen! Benutze /xpt config",
+        -- Color labels
+        colorXpLabel = "EP/h Beschriftung",
+        colorXpValue = "EP/h Wert",
+        colorLevelLabel = "Level Beschriftung",
+        colorLevelValue = "Verbleibende Zeit",
+        colorTimeLabel = "Zeit Beschriftung",
+        colorTimeValue = "Zeit Wert",
+        colorMaxLevel = "Max Level",
+        configButton = "Konfig",
+        -- Scale & Font
+        scaleSection = "Skalierung & Schrift",
+        scaleLabel = "Interface-Skalierung",
+        fontSizeLabel = "Schriftgröße",
+        opacityLabel = "Hintergrund-Transparenz",
+        fontSection = "Schriftart",
+        fontDesc = "Wählen Sie die Schriftart"
     }
 elseif locale == "esES" or locale == "esMX" then
     XPT.L = {
@@ -118,7 +156,38 @@ elseif locale == "esES" or locale == "esMX" then
         resetConfirm = "¿Desea reiniciar las estadísticas?",
         resetCancelled = "Reinicio cancelado",
         yes = "Sí",
-        no = "No"
+        no = "No",
+        -- Config panel
+        configTitle = "Configuración",
+        configSubtitle = "Personalizar apariencia y colores",
+        alignmentSection = "Alineación de Texto",
+        alignmentDesc = "Los botones permanecen centrados",
+        alignLeft = "◄ Izquierda",
+        alignCenter = "• Centro •",
+        alignRight = "Derecha ►",
+        colorsSection = "Colores de Texto",
+        colorsDesc = "Haz clic en un cuadro de color para modificarlo",
+        colorTooltip = "Clic para cambiar",
+        resetDefault = "Restaurar valores",
+        resetConfigConfirm = "¿Restaurar toda la configuración?",
+        configReset = "¡Configuración restaurada!",
+        configLoaded = "Panel de configuración cargado! Usa /xpt config",
+        -- Color labels
+        colorXpLabel = "Etiqueta EXP/h",
+        colorXpValue = "Valor EXP/h",
+        colorLevelLabel = "Etiqueta Nivel",
+        colorLevelValue = "Tiempo Restante",
+        colorTimeLabel = "Etiqueta Tiempo",
+        colorTimeValue = "Valor Tiempo",
+        colorMaxLevel = "Nivel Máximo",
+        configButton = "Config",
+        -- Scale & Font
+        scaleSection = "Escala y Fuente",
+        scaleLabel = "Escala de Interfaz",
+        fontSizeLabel = "Tamaño de Fuente",
+        opacityLabel = "Opacidad del Fondo",
+        fontSection = "Fuente de Texto",
+        fontDesc = "Elige la fuente del texto"
     }
 elseif locale == "itIT" then
     XPT.L = {
@@ -148,7 +217,38 @@ elseif locale == "itIT" then
         resetConfirm = "Vuoi resettare le statistiche?",
         resetCancelled = "Reset annullato",
         yes = "Sì",
-        no = "No"
+        no = "No",
+        -- Config panel
+        configTitle = "Configurazione",
+        configSubtitle = "Personalizza aspetto e colori",
+        alignmentSection = "Allineamento Testo",
+        alignmentDesc = "I pulsanti restano centrati",
+        alignLeft = "◄ Sinistra",
+        alignCenter = "• Centro •",
+        alignRight = "Destra ►",
+        colorsSection = "Colori del Testo",
+        colorsDesc = "Clicca su un quadrato di colore per modificarlo",
+        colorTooltip = "Clicca per cambiare",
+        resetDefault = "Ripristina predefiniti",
+        resetConfigConfirm = "Ripristinare tutte le impostazioni?",
+        configReset = "Impostazioni ripristinate!",
+        configLoaded = "Pannello config caricato! Usa /xpt config",
+        -- Color labels
+        colorXpLabel = "Etichetta ESP/h",
+        colorXpValue = "Valore ESP/h",
+        colorLevelLabel = "Etichetta Livello",
+        colorLevelValue = "Tempo Rimanente",
+        colorTimeLabel = "Etichetta Tempo",
+        colorTimeValue = "Valore Tempo",
+        colorMaxLevel = "Livello Massimo",
+        configButton = "Config",
+        -- Scale & Font
+        scaleSection = "Scala e Font",
+        scaleLabel = "Scala Interfaccia",
+        fontSizeLabel = "Dimensione Font",
+        opacityLabel = "Opacità Sfondo",
+        fontSection = "Carattere",
+        fontDesc = "Scegli il carattere del testo"
     }
 elseif locale == "ptBR" or locale == "ptPT" then
     XPT.L = {
@@ -178,7 +278,38 @@ elseif locale == "ptBR" or locale == "ptPT" then
         resetConfirm = "Deseja reiniciar as estatísticas?",
         resetCancelled = "Reinício cancelado",
         yes = "Sim",
-        no = "Não"
+        no = "Não",
+        -- Config panel
+        configTitle = "Configuração",
+        configSubtitle = "Personalizar aparência e cores",
+        alignmentSection = "Alinhamento do Texto",
+        alignmentDesc = "Os botões permanecem centralizados",
+        alignLeft = "◄ Esquerda",
+        alignCenter = "• Centro •",
+        alignRight = "Direita ►",
+        colorsSection = "Cores do Texto",
+        colorsDesc = "Clique em um quadrado de cor para modificar",
+        colorTooltip = "Clique para alterar",
+        resetDefault = "Restaurar padrão",
+        resetConfigConfirm = "Restaurar todas as configurações?",
+        configReset = "Configurações restauradas!",
+        configLoaded = "Painel de config carregado! Use /xpt config",
+        -- Color labels
+        colorXpLabel = "Rótulo EXP/h",
+        colorXpValue = "Valor EXP/h",
+        colorLevelLabel = "Rótulo Nível",
+        colorLevelValue = "Tempo Restante",
+        colorTimeLabel = "Rótulo Tempo",
+        colorTimeValue = "Valor Tempo",
+        colorMaxLevel = "Nível Máximo",
+        configButton = "Config",
+        -- Scale & Font
+        scaleSection = "Escala e Fonte",
+        scaleLabel = "Escala da Interface",
+        fontSizeLabel = "Tamanho da Fonte",
+        opacityLabel = "Opacidade do Fundo",
+        fontSection = "Fonte do Texto",
+        fontDesc = "Escolha a fonte do texto"
     }
 elseif locale == "ruRU" then
     XPT.L = {
@@ -208,7 +339,38 @@ elseif locale == "ruRU" then
         resetConfirm = "Вы хотите сбросить статистику?",
         resetCancelled = "Сброс отменен",
         yes = "Да",
-        no = "Нет"
+        no = "Нет",
+        -- Config panel
+        configTitle = "Настройки",
+        configSubtitle = "Настроить внешний вид и цвета",
+        alignmentSection = "Выравнивание Текста",
+        alignmentDesc = "Кнопки остаются по центру",
+        alignLeft = "◄ Слева",
+        alignCenter = "• Центр •",
+        alignRight = "Справа ►",
+        colorsSection = "Цвета Текста",
+        colorsDesc = "Нажмите на цветной квадрат для изменения",
+        colorTooltip = "Нажмите для изменения",
+        resetDefault = "Сбросить настройки",
+        resetConfigConfirm = "Сбросить все настройки?",
+        configReset = "Настройки сброшены!",
+        configLoaded = "Панель настроек загружена! Используйте /xpt config",
+        -- Color labels
+        colorXpLabel = "Метка Опыт/ч",
+        colorXpValue = "Значение Опыт/ч",
+        colorLevelLabel = "Метка Уровень",
+        colorLevelValue = "Оставшееся Время",
+        colorTimeLabel = "Метка Время",
+        colorTimeValue = "Значение Время",
+        colorMaxLevel = "Макс Уровень",
+        configButton = "Настройки",
+        -- Scale & Font
+        scaleSection = "Масштаб и Шрифт",
+        scaleLabel = "Масштаб Интерфейса",
+        fontSizeLabel = "Размер Шрифта",
+        opacityLabel = "Прозрачность Фона",
+        fontSection = "Шрифт",
+        fontDesc = "Выберите шрифт текста"
     }
 elseif locale == "koKR" then
     XPT.L = {
@@ -238,7 +400,38 @@ elseif locale == "koKR" then
         resetConfirm = "통계를 초기화하시겠습니까?",
         resetCancelled = "초기화 취소됨",
         yes = "예",
-        no = "아니요"
+        no = "아니요",
+        -- Config panel
+        configTitle = "설정",
+        configSubtitle = "외관 및 색상 맞춤설정",
+        alignmentSection = "텍스트 정렬",
+        alignmentDesc = "버튼은 중앙에 유지됩니다",
+        alignLeft = "◄ 왼쪽",
+        alignCenter = "• 중앙 •",
+        alignRight = "오른쪽 ►",
+        colorsSection = "텍스트 색상",
+        colorsDesc = "색상 사각형을 클릭하여 수정",
+        colorTooltip = "클릭하여 변경",
+        resetDefault = "기본값으로 복원",
+        resetConfigConfirm = "모든 설정을 초기화하시겠습니까?",
+        configReset = "설정이 초기화되었습니다!",
+        configLoaded = "설정 패널 로드됨! /xpt config 사용",
+        -- Color labels
+        colorXpLabel = "경험치/시 레이블",
+        colorXpValue = "경험치/시 값",
+        colorLevelLabel = "레벨 레이블",
+        colorLevelValue = "남은 시간",
+        colorTimeLabel = "시간 레이블",
+        colorTimeValue = "시간 값",
+        colorMaxLevel = "최대 레벨",
+        configButton = "설정",
+        -- Scale & Font
+        scaleSection = "배율 및 글꼴",
+        scaleLabel = "인터페이스 배율",
+        fontSizeLabel = "글꼴 크기",
+        opacityLabel = "배경 불투명도",
+        fontSection = "글꼴",
+        fontDesc = "텍스트 글꼴 선택"
     }
 elseif locale == "zhCN" then
     XPT.L = {
@@ -268,7 +461,38 @@ elseif locale == "zhCN" then
         resetConfirm = "您想重置统计数据吗？",
         resetCancelled = "重置已取消",
         yes = "是",
-        no = "否"
+        no = "否",
+        -- Config panel
+        configTitle = "配置",
+        configSubtitle = "自定义外观和颜色",
+        alignmentSection = "文本对齐",
+        alignmentDesc = "按钮保持居中",
+        alignLeft = "◄ 左对齐",
+        alignCenter = "• 居中 •",
+        alignRight = "右对齐 ►",
+        colorsSection = "文本颜色",
+        colorsDesc = "点击颜色方块进行修改",
+        colorTooltip = "点击更改",
+        resetDefault = "恢复默认",
+        resetConfigConfirm = "重置所有设置？",
+        configReset = "设置已重置！",
+        configLoaded = "配置面板已加载！使用 /xpt config",
+        -- Color labels
+        colorXpLabel = "经验/小时标签",
+        colorXpValue = "经验/小时数值",
+        colorLevelLabel = "等级标签",
+        colorLevelValue = "剩余时间",
+        colorTimeLabel = "时间标签",
+        colorTimeValue = "时间数值",
+        colorMaxLevel = "最高等级",
+        configButton = "配置",
+        -- Scale & Font
+        scaleSection = "缩放与字体",
+        scaleLabel = "界面缩放",
+        fontSizeLabel = "字体大小",
+        opacityLabel = "背景不透明度",
+        fontSection = "字体",
+        fontDesc = "选择文本字体"
     }
 elseif locale == "zhTW" then
     XPT.L = {
@@ -298,7 +522,38 @@ elseif locale == "zhTW" then
         resetConfirm = "您想重置統計數據嗎？",
         resetCancelled = "重置已取消",
         yes = "是",
-        no = "否"
+        no = "否",
+        -- Config panel
+        configTitle = "配置",
+        configSubtitle = "自訂外觀和顏色",
+        alignmentSection = "文字對齊",
+        alignmentDesc = "按鈕保持置中",
+        alignLeft = "◄ 靠左",
+        alignCenter = "• 置中 •",
+        alignRight = "靠右 ►",
+        colorsSection = "文字顏色",
+        colorsDesc = "點擊顏色方塊進行修改",
+        colorTooltip = "點擊更改",
+        resetDefault = "恢復預設",
+        resetConfigConfirm = "重置所有設定？",
+        configReset = "設定已重置！",
+        configLoaded = "配置面板已載入！使用 /xpt config",
+        -- Color labels
+        colorXpLabel = "經驗/小時標籤",
+        colorXpValue = "經驗/小時數值",
+        colorLevelLabel = "等級標籤",
+        colorLevelValue = "剩餘時間",
+        colorTimeLabel = "時間標籤",
+        colorTimeValue = "時間數值",
+        colorMaxLevel = "最高等級",
+        configButton = "配置",
+        -- Scale & Font
+        scaleSection = "縮放與字型",
+        scaleLabel = "介面縮放",
+        fontSizeLabel = "字型大小",
+        opacityLabel = "背景不透明度",
+        fontSection = "字型",
+        fontDesc = "選擇文字字型"
     }
 else -- English (enUS, enGB) default
     XPT.L = {
@@ -352,6 +607,13 @@ else -- English (enUS, enGB) default
         colorTimeLabel = "Time Label",
         colorTimeValue = "Time Value",
         colorMaxLevel = "Max Level",
-        configButton = "Config"
+        configButton = "Config",
+        -- Scale & Font
+        scaleSection = "Scale & Font",
+        scaleLabel = "Interface Scale",
+        fontSizeLabel = "Font Size",
+        opacityLabel = "Background Opacity",
+        fontSection = "Font",
+        fontDesc = "Choose text font"
     }
 end
